@@ -1,0 +1,21 @@
+node_modules
+dist
+.env
+*.log
+coverage
+.vitest
+authenticated-test-account
+*.accounts
+*.account
+.env*
+!*.example
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.pytest_cache/

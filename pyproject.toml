@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "outlook-graph-module"
+version = "1.0.0"
+description = "Enterprise-grade Python module for Microsoft Outlook and Hotmail mailboxes via Microsoft Graph API v1.0"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Graph Module Contributors" }
+]
+keywords = [
+    "microsoft-graph",
+    "outlook",
+    "hotmail",
+    "email",
+    "otp",
+    "verification-code",
+    "oauth2"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Communications :: Email",
+]
+dependencies = []
+
+[project.scripts]
+outlook-graph = "outlook_graph.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["outlook_graph*"]

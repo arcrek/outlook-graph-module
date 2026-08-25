@@ -1,0 +1,36 @@
+{
+  "name": "outlook-graph-module",
+  "version": "1.0.0",
+  "description": "Microsoft Outlook Graph API module for reading emails and extracting OTP codes",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "bin": {
+    "outlook-graph": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "cli": "tsx ts/cli.ts",
+    "test": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:all": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "outlook",
+    "microsoft-graph",
+    "email",
+    "otp",
+    "oauth2",
+    "graph-api"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.13.5",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.6"
+  }
+}
