@@ -33,6 +33,18 @@ class TestAccountParser(unittest.TestCase):
         line = "user@hotmail.com|password123|token|client-id|consumers"
         acc = parse_account_line(line)
         self.assertEqual(acc.authority, "consumers")
+    def test_parse_recovery_email_in_5_part_line(self) -> None:
+        line = "user@hotmail.com|password123|token|client-id|user@recovery.com"
+        acc = parse_account_line(line)
+        self.assertEqual(acc.recovery_email, "user@recovery.com")
+        self.assertEqual(acc.recoveryEmail, "user@recovery.com")
+        self.assertIsNone(acc.authority)
+
+    def test_parse_6_part_line_with_recovery_email(self) -> None:
+        line = "user@hotmail.com|password123|token|client-id|user@recovery.com|consumers"
+        acc = parse_account_line(line)
+        self.assertEqual(acc.recovery_email, "user@recovery.com")
+        self.assertEqual(acc.authority, "consumers")
 
     def test_throw_on_empty_or_whitespace_line(self) -> None:
         with self.assertRaises(AccountParseError):

@@ -27,7 +27,27 @@ export function parseAccountLine(
   const password = shouldTrim ? parts[1].trim() : parts[1];
   const refreshToken = (shouldTrim ? parts[2].trim() : parts[2]) || '';
   const clientId = (shouldTrim ? parts[3].trim() : parts[3]) || '';
-  const authority = (parts[4] ? (shouldTrim ? parts[4].trim() : parts[4]) : undefined) || options?.defaultAuthority;
+  let authority: string | undefined = options?.defaultAuthority;
+  let recoveryEmail: string | undefined;
+
+  if (parts.length === 5) {
+    const p4 = shouldTrim ? parts[4].trim() : parts[4];
+    if (p4.includes('@')) {
+      recoveryEmail = p4;
+    } else if (p4) {
+      authority = p4;
+    }
+  } else if (parts.length >= 6) {
+    const p4 = shouldTrim ? parts[4].trim() : parts[4];
+    const p5 = shouldTrim ? parts[5].trim() : parts[5];
+    if (p4.includes('@')) {
+      recoveryEmail = p4;
+      authority = p5 || options?.defaultAuthority;
+    } else {
+      authority = p4 || options?.defaultAuthority;
+      recoveryEmail = p5 || undefined;
+    }
+  }
 
   if (!email) {
     throw new AccountParseError('Account email is missing or empty', line);
@@ -45,6 +65,7 @@ export function parseAccountLine(
     refreshToken,
     clientId,
     authority: authority || undefined,
+    recoveryEmail: recoveryEmail || undefined,
   };
 }
 

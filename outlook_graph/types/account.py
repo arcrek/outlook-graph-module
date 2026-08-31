@@ -13,6 +13,7 @@ class AccountCredentials:
     client_id: str
     password: str | None = None
     authority: str | None = None
+    recovery_email: str | None = None
 
     @property
     def refreshToken(self) -> str:
@@ -24,6 +25,10 @@ class AccountCredentials:
         """Alias for client_id to maintain TypeScript naming parity."""
         return self.client_id
 
+    @property
+    def recoveryEmail(self) -> str | None:
+        """Alias for recovery_email to maintain TypeScript naming parity."""
+        return self.recovery_email
 
 @dataclass(slots=True)
 class ParseAccountOptions:

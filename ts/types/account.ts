@@ -4,6 +4,7 @@ export interface AccountCredentials {
   refreshToken: string;
   clientId: string;
   authority?: string;
+  recoveryEmail?: string;
 }
 
 export interface ParseAccountOptions {
