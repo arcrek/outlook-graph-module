@@ -38,12 +38,24 @@ def parse_account_line(
     refresh_token = (parts[2].strip() if should_trim else parts[2]) or ""
     client_id = (parts[3].strip() if should_trim else parts[3]) or ""
 
-    authority: str | None = None
-    if len(parts) > 4 and parts[4]:
-        authority = parts[4].strip() if should_trim else parts[4]
-    elif options is not None and options.default_authority:
-        authority = options.default_authority
+    authority: str | None = options.default_authority if options is not None else None
+    recovery_email: str | None = None
 
+    if len(parts) == 5:
+        p4 = parts[4].strip() if should_trim else parts[4]
+        if "@" in p4:
+            recovery_email = p4
+        elif p4:
+            authority = p4
+    elif len(parts) >= 6:
+        p4 = parts[4].strip() if should_trim else parts[4]
+        p5 = parts[5].strip() if should_trim else parts[5]
+        if "@" in p4:
+            recovery_email = p4
+            authority = p5 or (options.default_authority if options is not None else None)
+        else:
+            authority = p4 or (options.default_authority if options is not None else None)
+            recovery_email = p5 or None
     if not email:
         raise AccountParseError(
             "Account email is missing or empty",
@@ -69,6 +81,7 @@ def parse_account_line(
         refresh_token=refresh_token,
         client_id=client_id,
         authority=authority,
+        recovery_email=recovery_email,
     )
 
 

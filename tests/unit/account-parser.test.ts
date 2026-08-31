@@ -28,6 +28,32 @@ describe('account-parser', () => {
 
     expect(acc.authority).toBe('consumers');
   });
+  it('should parse recovery email in 5-part account line when 5th field contains @', () => {
+    const line =
+      'user@hotmail.com|password123|token|client-id|user@recovery.com';
+    const acc = parseAccountLine(line);
+
+    expect(acc.recoveryEmail).toBe('user@recovery.com');
+    expect(acc.authority).toBeUndefined();
+  });
+
+  it('should parse 6-part account line with recovery email and authority', () => {
+    const line =
+      'user@hotmail.com|password123|token|client-id|user@recovery.com|consumers';
+    const acc = parseAccountLine(line);
+
+    expect(acc.recoveryEmail).toBe('user@recovery.com');
+    expect(acc.authority).toBe('consumers');
+  });
+
+  it('should parse 6-part account line with authority and recovery email', () => {
+    const line =
+      'user@hotmail.com|password123|token|client-id|consumers|user@recovery.com';
+    const acc = parseAccountLine(line);
+
+    expect(acc.recoveryEmail).toBe('user@recovery.com');
+    expect(acc.authority).toBe('consumers');
+  });
 
   it('should throw AccountParseError for empty or whitespace-only lines', () => {
     expect(() => parseAccountLine('')).toThrow(AccountParseError);
