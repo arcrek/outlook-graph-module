@@ -5,6 +5,7 @@ import { OutlookMailClient } from './mail/mail-client.js';
 import { OutlookTokenManager } from './auth/token-manager.js';
 import { cleanHtml } from './otp/otp-extractor.js';
 import type { AccountCredentials } from './types/account.js';
+import { TokenRefreshError } from './types/errors.js';
 
 interface CliArgs {
   command: string;
@@ -60,6 +61,15 @@ function parseCliArgs(args: string[]): CliArgs {
   }
 
   return parsed;
+}
+
+function formatErrorMessage(err: unknown): string {
+  if (err instanceof TokenRefreshError) {
+    const diag = err.aadstsCode ? ` [AADSTS${err.aadstsCode}: ${err.diagnosticReason}]` : '';
+    const action = err.remediation ? ` -> Action: ${err.remediation}` : '';
+    return `${err.message}${diag}${action}`;
+  }
+  return err instanceof Error ? err.message : String(err);
 }
 
 function printUsage(): void {
@@ -318,7 +328,7 @@ async function main(): Promise<void> {
               tokenExpiresIn: tokenResp.expires_in,
             });
           } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : String(err);
+            const msg = formatErrorMessage(err);
             process.stdout.write(`FAILED: ${msg}\n`);
             results.push({
               email: acc.email,
@@ -337,7 +347,7 @@ async function main(): Promise<void> {
         process.exit(1);
     }
   } catch (err: unknown) {
-    const errorMsg = err instanceof Error ? err.message : String(err);
+    const errorMsg = formatErrorMessage(err);
     console.error(`\n[ERROR] ${errorMsg}`);
     process.exit(1);
   }

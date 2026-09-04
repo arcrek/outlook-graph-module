@@ -2,7 +2,7 @@
 export { OutlookMailClient } from './mail/mail-client.js';
 export { OutlookTokenManager } from './auth/token-manager.js';
 export { GraphHttpClient } from './http/graph-client.js';
-
+export { parseOAuthError } from './auth/oauth-error.js';
 // Parser Functions
 export {
   parseAccountLine,
@@ -35,6 +35,10 @@ export {
 } from './types/errors.js';
 
 // Types & Interfaces
+export type {
+  TokenErrorReason,
+  TokenErrorDiagnostics,
+} from './types/errors.js';
 export type {
   AccountCredentials,
   ParseAccountOptions,

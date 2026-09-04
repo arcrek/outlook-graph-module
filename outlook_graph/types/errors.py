@@ -1,7 +1,17 @@
 """Domain error hierarchy for the Microsoft Outlook Graph API module."""
 
-from __future__ import annotations
-from typing import Any
+from typing import Any, Literal
+
+TokenErrorReason = Literal[
+    "EXPIRED_OR_REVOKED_GRANT",
+    "CLIENT_ID_MISMATCH",
+    "INVALID_CLIENT",
+    "ACCOUNT_LOCKED",
+    "ACCOUNT_DISABLED",
+    "INTERACTION_REQUIRED",
+    "INVALID_SCOPE",
+    "UNKNOWN",
+]
 
 
 class GraphModuleError(Exception):
@@ -40,11 +50,26 @@ class TokenRefreshError(GraphModuleError):
         message: str,
         status_code: int | None = None,
         error_response: dict[str, Any] | None = None,
+        aadsts_code: int | None = None,
+        diagnostic_reason: TokenErrorReason | str | None = None,
+        remediation: str | None = None,
     ) -> None:
         super().__init__(message, "TOKEN_REFRESH_ERROR")
         self.status_code = status_code
         self.error_response = error_response
+        self.aadsts_code = aadsts_code
+        self.diagnostic_reason = diagnostic_reason
+        self.remediation = remediation
 
+    @property
+    def aadstsCode(self) -> int | None:
+        """TypeScript camelCase alias for aadsts_code."""
+        return self.aadsts_code
+
+    @property
+    def diagnosticReason(self) -> TokenErrorReason | str | None:
+        """TypeScript camelCase alias for diagnostic_reason."""
+        return self.diagnostic_reason
 
 class GraphApiError(GraphModuleError):
     """Raised when the Microsoft Graph API returns an HTTP error response."""
