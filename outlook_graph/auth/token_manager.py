@@ -19,6 +19,7 @@ from ..types.auth import (
     TokenRotationCallback,
 )
 from ..types.errors import RateLimitError, TokenRefreshError
+from .oauth_error import parse_oauth_error
 
 logger = logging.getLogger(__name__)
 
@@ -232,15 +233,10 @@ class OutlookTokenManager:
                     continue
 
                 # 400 Bad Request / 401 Unauthorized etc.
-                error_desc = (
-                    parsed_json.get("error_description")
-                    or parsed_json.get("error")
-                    or http_err.reason
-                )
-                raise TokenRefreshError(
-                    f"Failed to refresh OAuth token for account {account.email}: {error_desc}",
+                raise parse_oauth_error(
                     status_code=status,
-                    error_response=parsed_json,
+                    data=parsed_json,
+                    email=account.email,
                 ) from http_err
 
             except Exception as err:

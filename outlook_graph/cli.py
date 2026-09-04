@@ -14,7 +14,19 @@ from .otp.otp_extractor import clean_html
 from .parser.account_parser import parse_account_file, parse_account_line
 from .types.account import AccountCredentials
 from .types.mail import GetMessagesOptions, WaitForEmailOptions
+from .types.errors import TokenRefreshError
 
+
+def _format_error_message(err: Exception) -> str:
+    if isinstance(err, TokenRefreshError):
+        diag = (
+            f" [AADSTS{err.aadsts_code}: {err.diagnostic_reason}]"
+            if err.aadsts_code
+            else ""
+        )
+        action = f" -> Action: {err.remediation}" if err.remediation else ""
+        return f"{err.message}{diag}{action}"
+    return str(err)
 
 def _serialize(obj: Any) -> Any:
     """Helper to serialize dataclasses and custom objects to JSON-compatible dicts."""
@@ -425,12 +437,13 @@ def main() -> None:
                         }
                     )
                 except Exception as err:
-                    sys.stdout.write(f"FAILED: {err}\n")
+                    formatted = _format_error_message(err)
+                    sys.stdout.write(f"FAILED: {formatted}\n")
                     results.append(
                         {
                             "email": acc.email,
                             "status": "failed",
-                            "error": str(err),
+                            "error": formatted,
                         }
                     )
 
@@ -438,7 +451,7 @@ def main() -> None:
             print(f"\nSummary: {passed_count}/{len(accounts)} passed.")
 
     except Exception as err:
-        print(f"\n[ERROR] {err}", file=sys.stderr)
+        print(f"\n[ERROR] {_format_error_message(err)}", file=sys.stderr)
         sys.exit(1)
 
 

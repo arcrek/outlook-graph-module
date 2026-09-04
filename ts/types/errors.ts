@@ -16,14 +16,38 @@ export class AccountParseError extends GraphModuleError {
   }
 }
 
+export type TokenErrorReason =
+  | 'EXPIRED_OR_REVOKED_GRANT'
+  | 'CLIENT_ID_MISMATCH'
+  | 'INVALID_CLIENT'
+  | 'ACCOUNT_LOCKED'
+  | 'ACCOUNT_DISABLED'
+  | 'INTERACTION_REQUIRED'
+  | 'INVALID_SCOPE'
+  | 'UNKNOWN';
+
+export interface TokenErrorDiagnostics {
+  aadstsCode?: number;
+  diagnosticReason?: TokenErrorReason;
+  remediation?: string;
+}
+
 export class TokenRefreshError extends GraphModuleError {
+  public readonly aadstsCode?: number;
+  public readonly diagnosticReason?: TokenErrorReason;
+  public readonly remediation?: string;
+
   constructor(
     message: string,
     public readonly statusCode?: number,
-    public readonly errorResponse?: Record<string, unknown>
+    public readonly errorResponse?: Record<string, unknown>,
+    diagnostics?: TokenErrorDiagnostics
   ) {
     super(message, 'TOKEN_REFRESH_ERROR');
     this.name = 'TokenRefreshError';
+    this.aadstsCode = diagnostics?.aadstsCode;
+    this.diagnosticReason = diagnostics?.diagnosticReason;
+    this.remediation = diagnostics?.remediation;
   }
 }
 

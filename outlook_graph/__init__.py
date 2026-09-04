@@ -24,6 +24,7 @@ from .types import (
     GraphModuleError,
     AccountParseError,
     TokenRefreshError,
+    TokenErrorReason,
     GraphApiError,
     RateLimitError,
     TimeoutError,
@@ -37,6 +38,7 @@ from .parser import (
     parseAccountFile,
 )
 from .auth import OutlookTokenManager
+from .auth.oauth_error import parse_oauth_error
 from .http import (
     GraphHttpClient,
     RequestOptions,
@@ -78,6 +80,8 @@ __all__ = [
     "GraphModuleError",
     "AccountParseError",
     "TokenRefreshError",
+    "TokenErrorReason",
+    "parse_oauth_error",
     "GraphApiError",
     "RateLimitError",
     "TimeoutError",

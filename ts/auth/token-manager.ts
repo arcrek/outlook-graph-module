@@ -1,4 +1,5 @@
 import { TokenRefreshError, RateLimitError } from '../types/errors.js';
+import { parseOAuthError } from './oauth-error.js';
 import type { AccountCredentials } from '../types/account.js';
 import type {
   TokenResponse,
@@ -154,15 +155,7 @@ export class OutlookTokenManager {
         const data = (await res.json()) as Record<string, unknown>;
 
         if (!res.ok) {
-          const errorDesc =
-            (data['error_description'] as string) ||
-            (data['error'] as string) ||
-            res.statusText;
-          throw new TokenRefreshError(
-            `Failed to refresh OAuth token for account ${account.email}: ${errorDesc}`,
-            res.status,
-            data
-          );
+          throw parseOAuthError(res.status, data, account.email);
         }
 
         const tokenResponse: TokenResponse = {
